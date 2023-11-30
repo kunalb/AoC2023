@@ -1,20 +1,20 @@
-:;; Lightweight reimplementation of Blitzen as a library.
-:;; (Original https://github.com/kunalb/blitzen/)
-:;;
-:;;                           20'23
-:;;                        (         )
-:;;                         \(     )/
-:;;                          \(   )/
-:;;                        (\ )---( /)
-:;;                          / a c \
-:;;                          (  o  )
-:;;                           \ ‿ /
-:;;
-:;;
-:;; Usage:
-:;;   (set-key <private key from 'session' cookie>)
-:;;   (get-input <year> <day>)
-:;;   (submit-answer <year> <day> <level> <answer>)
+;;; Lightweight reimplementation of Blitzen as a library.
+;;; (Original https://github.com/kunalb/blitzen/)
+;;;
+;;;                           20'23
+;;;                        (         )
+;;;                         \(     )/
+;;;                          \(   )/
+;;;                        (\ )---( /)
+;;;                          / a c \
+;;;                          (  o  )
+;;;                           \ ‿ /
+;;;
+;;;
+;;; Usage:
+;;;   (set-key <private key from 'session' cookie>)
+;;;   (get-input <year> <day>)
+;;;   (submit-answer <year> <day> <level> <answer>)
 
 (import
   pathlib [Path]
