@@ -54,15 +54,6 @@
     (keyfile.read)))
 
 
-(defn open-url [url]
-  (setv cookie-jar (CookieJar))
-  (setv opener
-        (urllib.request.build_opener urllib.request.HTTPCookieProcessor cookie-jar))
-  (opener.addheaders.append #("Cookie" "session={(get-key)}"))
-  (with [response (opener.open url)]
-    (. (response.read) text)))
-
-
 (defn get-input [year day]
   "Fetch problem input"
   (setv cache-path (/ (cache-dir) f"{year}_{day}"))
@@ -71,13 +62,15 @@
         (cached.read))
       (do
         (setv
-          fetched-input
-          (. (requests.get f"https://adventofcode.com/{year}/day/{day}/input"
-                           :cookies {"session" (get-key)})
-             text))
+          response
+          (requests.get f"https://adventofcode.com/{year}/day/{day}/input"
+                           :cookies {"session" (get-key)}))
+        (when
+          (= 404 response.status_code)
+          (raise (Exception response.text)))
         (with [cached (open cache-path "w")]
-          (cached.write fetched-input))
-        fetched-input)))
+          (cached.write response.text))
+        response.text)))
 
 
 (defn submit-answer [year day level answer]
