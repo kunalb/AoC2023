@@ -1,44 +1,45 @@
-(import collections [defaultdict])
+(import parsy :as p)
 
 (require hyrule.control [defmain])
 (import bzn)
 
 (setv puzzle-input (bzn.get-input 2023 4))
 
-(defn soln [puzzle-input]
-  (sum
-    (gfor line (.split (puzzle-input.strip) "\n")
-          (do
-            (setv #(card-name numbers) (line.split ":"))
-            (setv #(winners my-numbers)
-                  (tuple (map (fn [x] (list (map int (x.split))))
-                             (numbers.split "|"))))
-            (setv common (len (& (set winners) (set my-numbers))))
-            (if (> common 0)
-                (** 2 (- common 1)) 0)))))
 
-(defn soln2 [puzzle-input]
-  (setv card-counts {})
+(defn [p.generate] input-line []
+  (setv num (.map (p.regex r"[0-9]+") int))
+  (setv numlist (num.sep_by p.whitespace))
+
+  (yield (>> (p.string "Card") p.whitespace))
+  (setv card-index (yield num))
+  (yield (>> (p.string ":") p.whitespace))
+  (setv winners (yield numlist))
+  (yield (>> p.whitespace (p.string "|") p.whitespace))
+  (setv my-numbers (yield numlist))
+
+  #(card-index (set winners) (set my-numbers)))
+
+
+(defn soln [puzzle-input]
+  (setv points 0
+        cards 0
+        multipliers {})
 
   (for [line (.split (puzzle-input.strip) "\n")]
-    (do
-      (setv #(card-name numbers) (line.split ":"))
-      (setv card-index (int (get (card-name.split) 1)))
-      (setv #(winners my-numbers)
-            (tuple (map (fn [x] (list (map int (x.split))))
-                        (numbers.split "|"))))
-      (setv card-winners (len (& (set winners) (set my-numbers))))
+    (setv #(card-index winners my-numbers)
+          (input-line.parse line))
+    (when (setx common (len (& winners my-numbers)))
+      (+= points (** 2 (- common 1))))
 
-      (setv
-        (get card-counts card-index)
-        (+ (card-counts.get card-index 0) 1))
-      (for [x (range (+ 1 card-index) (+ card-winners card-index 1))]
-        (setv
-          (get card-counts x)
-          (+ (card-counts.get x 0) (get card-counts card-index))))))
-  (sum (card-counts.values)))
+    (setv card-copies (+ 1 (multipliers.pop card-index 0)))
+    (+= cards card-copies)
 
+    (for [i (range common)]
+      (setv index (+ i 1 card-index))
+      (setv (get multipliers index)
+            (+ card-copies (multipliers.get index 0)))))
+
+  #(points cards))
 
 (defmain []
-  (print (soln puzzle-input)
-         (soln2 puzzle-input)))
+  (print #* (soln puzzle-input)))
