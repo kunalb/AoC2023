@@ -73,7 +73,7 @@
                :show_header True))
   (setv total-wall-s 0)
   (setv total-cpu-s 0)
-  (with [_ (Live table :refresh_per_second 2)]
+  (with [_ (Live table)]
     (for [module (find-modules)]
       (setv soln (run-soln module))
       (+= total-wall-s soln.wall-s)
