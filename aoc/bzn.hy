@@ -95,7 +95,6 @@
         (tag.get_text)))
 
 
-
 (defn submit-answer [year day level answer]
   "Submit solution to problem"
   (setv result
