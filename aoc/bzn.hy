@@ -88,8 +88,9 @@
               (when
                 (= 404 response.status_code)
                 (raise (Exception response.text)))
-              (with [cached (open cache-path "w")]
-                (cached.write response.text))
+              (when (in "--- Part Two ---" response.text)
+                (with [cached (open cache-path "w")]
+                  (cached.write response.text)))
               response.text)))
   (lfor tag (.find_all (BeautifulSoup contents "html.parser") "pre")
         (tag.get_text)))

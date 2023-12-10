@@ -149,7 +149,7 @@
     (when (= start cur)
       (break)))
 
-  (debug-grid grid pipe "P")
+  ; (debug-grid grid pipe "P")
 
   (setv cur start)
   (while True
@@ -208,11 +208,11 @@
     (+= counter 1))
 
 
-  (debug-grid grid (-  right left visited))
-  (print (- right left visited))
+  ; (debug-grid grid (-  right left visited))
+  ; (print (- right left visited))
   (len (- right left visited)))
 
 
 (defmain []
-  #_ (print (soln2 (get sample-inputs 9))) ; 9
-  (print (soln2 puzzle-input)))
+  (print (soln puzzle-input)
+         (soln2 puzzle-input)))
