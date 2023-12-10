@@ -73,6 +73,29 @@
         response.text)))
 
 
+(defn get-sample-inputs [year day]
+  "Fetch problem input"
+  (setv cache-path (/ (cache-dir) f"problem_{year}_{day}"))
+  (setv contents
+        (if (cache-path.exists)
+            (with [cached (open cache-path)]
+              (cached.read))
+            (do
+              (setv
+                response
+                (requests.get f"https://adventofcode.com/{year}/day/{day}"
+                              :cookies {"session" (get-key)}))
+              (when
+                (= 404 response.status_code)
+                (raise (Exception response.text)))
+              (with [cached (open cache-path "w")]
+                (cached.write response.text))
+              response.text)))
+  (lfor tag (.find_all (BeautifulSoup contents "html.parser") "pre")
+        (tag.get_text)))
+
+
+
 (defn submit-answer [year day level answer]
   "Submit solution to problem"
   (setv result
