@@ -27,19 +27,16 @@
 
   (print pattern const)
 
-  (setv solns 0)
   (setv cts (list const))
   (setv ptn (list pattern))
-
-
-  0)
+  (recurse ptn cts))
 
 
 (defn recurse [ptn cts]
-  (print "Recurse" ptn cts)
-  (setv solns 0)
+  (setv options (** 2 (sum (gfor p ptn x p :if (= x "?") 1))))
+  (print options)
 
-  0)
+  options)
 
 
 (defn solve [pattern constraints]
