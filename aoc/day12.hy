@@ -25,7 +25,6 @@
     (pattern.pop)
     (const.pop))
 
-  (print pattern const)
 
   (setv cts (list const))
   (setv ptn (list pattern))
@@ -33,8 +32,60 @@
 
 
 (defn recurse [ptn cts]
+  (print (.join "." ptn) (.join "." (map (fn [x] (* x "#")) cts)))
   (setv options (** 2 (sum (gfor p ptn x p :if (= x "?") 1))))
   (print options)
+  (print (setx av (sum (map len ptn) (- (len ptn) 1)))
+         (setx us (+ (sum cts) (- (len cts) 1)))
+         (- (len cts) 1)
+         (- av us)
+         (** (- (len cts) 1) (- av us)))
+
+
+  (setv ptns (+ (.join "." ptn) "$"))
+  (setv ctss (+ (.join "." (map (fn [x] (* x "#")) cts)) "$"))
+  (setv pi 0)
+  (setv ci 0)
+
+  (setv seqs [])
+
+  (while (and (< pi (len ptns))
+              (< ci (len ctss)))
+
+    (print seqs)
+
+    (print (* " " pi) "v pi" :sep "")
+    (print ptns)
+
+    (print (* " " ci) "v ci" :sep "")
+    (print ctss)
+    (print)
+
+    (setv p? 0)
+    (while (and (< pi (len ptns))
+                (= "?" (get ptns pi)))
+      (+= p? 1)
+      (+= pi 1))
+
+    (setv pto-match "")
+    (while (and (< pi (len ptns))
+                (!= (get ptns pi) "?"))
+      (+= pto-match (get ptns pi))
+      (+= pi 1))
+
+    (setv cskip "")
+    (while (and (< ci (len ctss))
+                (!= pto-match (cut ctss ci (+ ci (len pto-match)))))
+      ; (print "Hunting for" pto-match)
+      ; (print (cut ctss ci (+ ci (len pto-match))))
+
+      (+= cskip (get ctss ci))
+      (+= ci 1))
+
+    (+= ci (len pto-match))
+
+    (seqs.append #(p? cskip)))
+  (print seqs)
 
   options)
 
@@ -170,7 +221,8 @@
 (defmain []
   #_ (print puzzle-input)
   ; (print (recurse ["#" "#"] [1 1]))
-  (print (soln2 (get sample-inputs 1) 1))
+  ; (print (soln2 (get sample-inputs 1) 2))
+  (print (soln2 "?.?.?.?.? 1"))
 
   ; (print (solve.cache-info))
 
