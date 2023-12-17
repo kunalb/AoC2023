@@ -13,13 +13,13 @@
 (defn soln [puzzle-input [level 1]]
   (setv grid (.split (puzzle-input.strip) "\n"))
 
-  (setv result 0)
   (setv height (len grid))
 
   (setv rolls 0)
   (print grid)
 
   (while (< rolls 1)
+
     (for [#(dir1 dir2)
           (zip
             [(range 0 (len (get grid 0)))
