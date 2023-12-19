@@ -1,36 +1,22 @@
 (import collections [deque Counter])
 (import re)
-(import functools [cache])
+(import itertools [starmap])
 
 (require hyrule.control [defmain])
 (import bzn)
 
+
 (setv puzzle-input (bzn.get-input 2023 12))
 (setv sample-inputs (bzn.get-sample-inputs 2023 12))
 
-(defn w [x]
-  f"{x :5}")
-
-(defn print-grid [ps cs grid]
-  (setv sep " | ")
-  (print (w "/") :end sep)
-  (print (.join sep (map w ps)))
-
-  (for [#(c g) (zip cs grid)]
-    (print (w c) :end sep)
-    (print (sep.join (map w g)))))
-
-(defn check [p c]
-  (cond
-    (= p "?") True
-    True (= p c)))
 
 (defn lookup [grid row col]
   (cond
-    (and (= 0 row) (= -1 col)) 1
+    (and (= -1 row) (= -1 col)) 1
     (= -1 row) 0
     (= -1 col) 0
     True (get grid row col)))
+
 
 (defn count-matches [pattern constraints]
   (while True
@@ -48,7 +34,7 @@
     (for [#(col p) (enumerate ps)]
       (setv val 0)
 
-      (when (not (check p c))
+      (when (not (or (= p "?") (= p c)))
         (continue))
 
       (cond
@@ -62,12 +48,13 @@
             (lookup grid row (- col 1))))
 
       (setv (get grid row col) val)))
-
-  ; (print-grid ps cs grid)
   (get grid -1 -1))
 
 
-(defn transform [problem]
+(defn transform [problem level]
+  (when (= level 1)
+    (return problem))
+
   (setv #(pattern constraints) problem)
   #((.join "?" (* 5 [pattern])) (* 5 constraints)))
 
@@ -78,19 +65,10 @@
               (do
                 (setv #(pattern constraints) (line.split))
                 (setv constraints (list (map int (constraints.split ","))))
-                #(pattern constraints))))
+                (transform #(pattern constraints) level))))
 
-  (sum (gfor problem problems
-             (do
-               (when (= level 2)
-                 (setv problem (transform problem)))
-               ; (print #* problem)
-               (setv result (count-matches #* problem))
-               ; (print "-> " result)
-               result))))
+  (sum (starmap count-matches problems)))
 
 
 (defmain []
-  (print
-    (soln puzzle-input)
-    (soln puzzle-input :level 2)))
+  (print (soln puzzle-input) (soln puzzle-input :level 2)))
